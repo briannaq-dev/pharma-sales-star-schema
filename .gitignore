@@ -1,0 +1,6 @@
+# allowlist: ignore everything except the code
+*
+!.gitignore
+!README.md
+!*.R
+!*.Rmd

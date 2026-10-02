@@ -1,0 +1,82 @@
+---
+title: "Use Fact Table to Support Analytical Queries"
+subtitle: "CS3200 / Final Project"
+author: "Brianna Quinn"
+date: "Summer 2 2024"
+output: html_notebook
+---
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# Knit in clean environment
+rm(list = ls())
+
+# Install and load required packages
+if (!require("pacman")) install.packages("pacman")
+suppressPackageStartupMessages({pacman::p_load(kableExtra, DBI, RMySQL, knitr)})
+
+# Remote MySQL settings come from environment variables (see README)
+db_name_fh <- Sys.getenv("DB_NAME")
+db_user_fh <- Sys.getenv("DB_USER")
+db_host_fh <- Sys.getenv("DB_HOST")
+db_pwd_fh <- Sys.getenv("DB_PASSWORD")
+db_port_fh <- as.integer(Sys.getenv("DB_PORT", "3306"))
+
+# Connect to remote server database
+mydb_fh <- dbConnect(RMySQL::MySQL(), 
+                     user = db_user_fh, 
+                     password = db_pwd_fh,
+                     dbname = db_name_fh, 
+                     host = db_host_fh, 
+                     port = db_port_fh)
+
+# Function to execute a query
+query_db <- function(query) {
+  dbGetQuery(mydb_fh, query)
+}
+```
+
+## Question 2: What is the total amount sold in each month of 2022 for 'Clobromizen'?
+```{r echo=FALSE}
+query_clobromizen <- "
+SELECT month, SUM(totalAmount) AS totalAmountSold
+FROM product_facts
+WHERE year = 2022 AND prodName = 'Clobromizen'
+GROUP BY month
+ORDER BY month"
+
+result_clobromizen <- query_db(query_clobromizen)
+
+print(result_clobromizen)
+
+# Display results
+result_clobromizen %>%
+  kbl(caption = "Total Amount Sold in Each Month of 2022 for Clobromizen") %>%
+  kable_styling()
+```
+
+## Question 3: How many units were sold in Brazil each year for 'Xipralofen'?
+```{r echo=FALSE}
+query_xipralofen <- "
+SELECT year, SUM(totalUnits) AS totalUnitsSold
+FROM product_facts
+WHERE country = 'Brazil' AND prodName = 'Xipralofen'
+GROUP BY year
+ORDER BY year"
+
+result_xipralofen <- query_db(query_xipralofen)
+
+print(result_xipralofen)
+
+# Display results
+result_xipralofen %>%
+  kbl(caption = "Units Sold in Brazil Each Year for Xipralofen") %>%
+  kable_styling()
+```
+
+```{r echo=FALSE}
+# Close the MySQL database connection
+# Close connection
+if (dbIsValid(mydb_fh)) {
+  dbDisconnect(mydb_fh)
+}
+```

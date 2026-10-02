@@ -1,6 +1,6 @@
 # Pharma Sales Star Schema (R, SQLite, MySQL)
-
-CS3200 (Introduction to Databases) final project. Takes raw pharmaceutical sales data, loads it into a normalized relational database, builds a star-schema fact table, and answers business questions with SQL.
+### Project for CS3200: Introduction to Databases SEC 02 S2 2024
+Takes raw pharmaceutical sales data, loads it into a normalized relational database, builds a star-schema fact table, and answers business questions with SQL.
 
 ## Pipeline
 
